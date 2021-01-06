@@ -21,6 +21,13 @@ npm run electron-dev
 
 ## Distribution
 
+npm run build
+
 - npm run dist:macOS
 - npm run dist:windows
 - npm run dist:linux
+
+## i18n Libraries
+
+- i18next
+- react-18next
