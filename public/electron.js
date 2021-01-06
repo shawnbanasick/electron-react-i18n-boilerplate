@@ -1,8 +1,10 @@
-const electron = require('electron');
-const isDev = require("electron-is-dev");
+const electron = require("electron");
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-const path = require('path');
+const Tray = electron.Tray;
+const dialog = require("electron").dialog;
+const path = require("path");
+const isDev = require("electron-is-dev");
 const appConfig = require("electron-settings");
 const config = require("./configs/app.config");
 const i18n = require("i18next");
@@ -12,18 +14,67 @@ const ipcMain = electron.ipcMain;
 
 let mainWindow;
 
-function createWindow() {
-  mainWindow = new BrowserWindow({width: 900, height: 680, webPreferences: {
-    nodeIntegration: true
-}});
-  mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
-  if (isDev) {
-    // Open the DevTools.
-    //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
-    mainWindow.webContents.openDevTools();
+function windowStateKeeper(windowName) {
+  let window, windowState;
+  function setBounds() {
+    // Restore from appConfig
+    if (appConfig.has(`windowState.${windowName}`)) {
+      windowState = appConfig.get(`windowState.${windowName}`);
+      return;
+    }
+    // Default
+    windowState = {
+      x: undefined,
+      y: undefined,
+      width: 1280,
+      height: 720
+    };
   }
+  function saveState() {
+    if (!windowState.isMaximized) {
+      windowState = window.getBounds();
+    }
+    windowState.isMaximized = window.isMaximized();
+    appConfig.set(`windowState.${windowName}`, windowState);
+  }
+  function track(win) {
+    window = win;
+    ["resize", "move", "close"].forEach(event => {
+      win.on(event, saveState);
+    });
+  }
+  setBounds();
+  return {
+    x: windowState.x,
+    y: windowState.y,
+    width: windowState.width,
+    height: windowState.height,
+    isMaximized: windowState.isMaximized,
+    track
+  };
+}
 
+function createWindow() {
+  // Get window state
+  const mainWindowStateKeeper = windowStateKeeper("main");
+  // Creating the window
+  const windowOptions = {
+    title: "Main Window",
+    x: mainWindowStateKeeper.x,
+    y: mainWindowStateKeeper.y,
+    width: mainWindowStateKeeper.width,
+    height: mainWindowStateKeeper.height,
+    webPreferences: { nodeIntegration: true, enableRemoteModule: true }
+  };
 
+  // let currentLanguage;
+  // if (appConfig.has(`currentLanguage`)) {
+  //   currentLanguage = appConfig.get(`currentLanguage`);
+  // } else {
+  //   currentLanguage = "en";
+  // }
+
+  // for testing - remove
   currentLanguage = "en";
 
   let pathToTranslation;
@@ -94,10 +145,49 @@ function createWindow() {
     appConfig.set(`currentLanguage`, lng);
   });
 
+  mainWindow = new BrowserWindow(windowOptions);
+  // Track window state
+  mainWindowStateKeeper.track(mainWindow);
 
+  mainWindow.loadURL(
+    isDev
+      ? "http://localhost:3000"
+      : `file://${path.join(__dirname, "../build/index.html")}`
+  );
 
-  mainWindow.on('closed', () => mainWindow = null);
-}
+  if (isDev) {
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+  }
+
+  // Emitted when the window is closed.
+  // Dereference the window object, usually you would store windows
+  // in an array if your app supports multi windows, this is the time
+  // when you should delete the corresponding element.
+  mainWindow.on("closed", () => (mainWindow = null));
+
+  // showMessageBox returns a promise
+  mainWindow.on("close", function(e) {
+    e.preventDefault();
+    var choice = dialog.showMessageBox(mainWindow, {
+      title: "Confirm Quit",
+      type: "question",
+      buttons: ["Yes", "No"],
+      message: "Are you sure you want to quit?",
+      cancelId: 2
+    });
+
+    choice.then(function(result) {
+      if (result.response === 0) {
+        mainWindow.destroy();
+      }
+    });
+  });
+
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
+} // end of create mainWindow function
 
 ipcMain.on("get-initial-translations", (event, arg) => {
   let currentLanguage;
@@ -120,16 +210,37 @@ ipcMain.on("get-initial-translations", (event, arg) => {
   i18n.changeLanguage(currentLanguage);
 });
 
-app.on('ready', createWindow);
+let updateVersion = "";
+let versionStoredInUserSettings = "";
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on("ready", () => {
+  createWindow();
+});
+
+menuFactoryService.buildMenu(app, mainWindow, i18n);
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-app.on('activate', () => {
+app.on("activate", function() {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
   }
 });
+
+function installExtensions() {
+  if (process.env.NODE_ENV === "development") {
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+
+    // Install extensions
+    installExtension(REACT_DEVELOPER_TOOLS)
+      .then(name => console.log(`Added Extension:  ${name}`))
+      .catch(err => console.log("An error occurred: ", err));
+  }
+}
