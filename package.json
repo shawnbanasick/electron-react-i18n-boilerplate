@@ -27,7 +27,7 @@
     "electron-is-dev": "^1.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-scripts": "4.0.1"
+    "react-scripts": "2.1.5"
   },
   "homepage": "./",
   "main": "public/electron.js",
