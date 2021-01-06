@@ -12,8 +12,62 @@
     "appId": "com.my-website.my-app",
     "productName": "MyApp",
     "copyright": "Copyright © 2019 ${author}",
+    "linux": {
+      "category": "Science",
+      "description": "Open source app",
+      "synopsis": "app",
+      "icon": "../build/icons/icon.icns",
+      "target": [
+        {
+          "target": "deb",
+          "arch": [
+            "ia32",
+            "x64"
+          ]
+        },
+        {
+          "target": "rpm",
+          "arch": [
+            "ia32",
+            "x64"
+          ]
+        },
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "snap",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "tar.gz",
+          "arch": [
+            "ia32",
+            "x64"
+          ]
+        }
+      ]
+    },
+    "win": {
+      "icon": "../build/icons/icon3.png",
+      "target": [
+        "portable",
+        "nsis"
+      ]
+    },
     "mac": {
-      "category": "public.app-category.utilities"
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "target": [
+        "dmg"
+      ]
     },
     "files": [
       "build/**/*",
@@ -46,7 +100,10 @@
     "electron-dev": "concurrently \"BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\"",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "npm run build",
-    "electron-pack": "build -mw"
+    "electron-pack": "build -mw",
+    "dist:macOS": "electron-builder --mac",
+    "dist:windows": "electron-builder --windows --x64 --ia32",
+    "dist:linux": "electron-builder --linux"
   },
   "eslintConfig": {
     "extends": "react-app"
