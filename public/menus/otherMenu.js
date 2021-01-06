@@ -94,135 +94,18 @@ module.exports = (app, mainWindow, i18n) => {
     },
     {
       label: i18n.t("Help"),
-      role: "help",
       submenu: [
         {
-          label: i18n.t("User Guide"),
-          accelerator:
-            process.platform === "darwin" ? "Alt+Cmd+U" : "Ctrl+Shift+U",
-          click() {
-            require("electron").shell.openExternal(
-              "https://github.com/shawnbanasick/kade/wiki"
-            );
-          }
-        },
-        {
-          label: `${i18n.t("Report a Bug")} -> ken.q.tools@gmail.com`,
-          click() {
-            require("electron").shell.openExternal(
-              "mailto:ken.q.tools@gmail.com"
-            );
+          label: i18n.t("About App"),
+          click: function(item, focusedWindow) {
+            if (focusedWindow) {
+            }
           }
         }
       ]
-    }
+    } 
   ];
 
-  /*
-  let menu = [
-    {
-      label: i18n.t("File"),
-      submenu: [
-        {
-          label: i18n.t("Quit"),
-          accelerator: "Ctrl+Q",
-          click: function() {
-            app.quit();
-          }
-        }
-      ]
-    },
-    {
-      label: "Edit",
-      submenu: [
-        {
-          label: i18n.t("Cut"),
-          accelerator: "Ctrl+X",
-          role: "cut"
-        },
-        {
-          label: i18n.t("Copy"),
-          accelerator: "Ctrl+C",
-          role: "copy"
-        },
-        {
-          label: i18n.t("Paste"),
-          accelerator: "Ctrl+P",
-          role: "paste"
-        },
-        {
-          label: i18n.t("Delete"),
-          accelerator: "Ctrl+D",
-          role: "delete"
-        },
-        {
-          label: i18n.t("Select All"),
-          accelerator: "Ctrl+A",
-          role: "selectall"
-        }
-      ]
-    },
-    {
-      label: i18n.t("View"),
-      submenu: [
-        {
-          label: i18n.t("Reload"),
-          accelerator: "Command+R",
-          role: "forcereload"
-          // click: function(item, focusedWindow) {
-          //   focusedWindow.reload();
-          // }
-        },
-        {
-          label: i18n.t("Full Screen"),
-          accelerator: "Ctrl+Command+F",
-          click: function(item, focusedWindow) {
-            focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-          }
-        },
-        {
-          label: i18n.t("Minimize"),
-          accelerator: "Command+M",
-          role: "minimize"
-        },
-        {
-          type: "separator"
-        },
-        {
-          label: i18n.t("Toggle Developer Tools"),
-          accelerator: "Alt+Command+I",
-          click: function(item, focusedWindow) {
-            focusedWindow.webContents.toggleDevTools();
-          }
-        }
-      ]
-    },
-    {
-      label: i18n.t("Help"),
-      submenu: [
-        {
-          label: "User Guide",
-          accelerator:
-            process.platform === "darwin" ? "Alt+Cmd+U" : "Ctrl+Shift+U",
-          click() {
-            require("electron").shell.openExternal(
-              "https://github.com/shawnbanasick/kade/wiki"
-            );
-          }
-        },
-        {
-          label: "Report a Bug -> ken.q.tools@gmail.com",
-          click() {
-            require("electron").shell.openExternal(
-              "mailto:ken.q.tools@gmail.com"
-            );
-          }
-        }
-      ]
-    }
-  ];
-
-  */
 
   const languageMenu = config.languages.map(languageCode => {
     return {
