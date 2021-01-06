@@ -1,1 +1,0 @@
-# electron-react-i18n-boilerplate
