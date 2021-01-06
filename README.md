@@ -1,3 +1,9 @@
+## Features
+
+- on-demand lanugage change of menu items and content
+- stores window size / location for next start
+- stores lanugage choice for next start
+
 ## Installation
 
 - npm install
