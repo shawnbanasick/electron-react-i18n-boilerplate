@@ -1,8 +1,9 @@
 ## Features
 
-- on-demand lanugage change of menu items and content
+- allows on-demand lanugage change of menu items and UI
 - stores window size / location for next start
 - stores lanugage choice for next start
+- confirms exit
 
 ## Installation
 
