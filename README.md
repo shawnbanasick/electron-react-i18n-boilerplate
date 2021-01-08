@@ -9,6 +9,7 @@
 
 - npm install
 - npm run postinstall
+- npm run build (to set up translation files)
 
 ## Development
 
