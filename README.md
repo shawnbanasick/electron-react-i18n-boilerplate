@@ -13,7 +13,7 @@
 
 ## Updating - Caution
 
-updating electron-settings breaks i18n setup (1/12/2021)
+updating electron-settings beyond 3.2.0 breaks i18n setup (1/12/2021)
 
 ## Development
 
