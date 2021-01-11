@@ -11,6 +11,10 @@
 - npm run postinstall
 - npm run build (to set up translation files)
 
+## Updating - Caution
+
+updating electron-settings breaks i18n setup (1/12/2021)
+
 ## Development
 
 npm run electron-dev
