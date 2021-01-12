@@ -1,3 +1,5 @@
+# Electron-React-i18n Template
+
 ## Features
 
 - allows on-demand lanugage change of menu items and UI
@@ -19,8 +21,9 @@ updating electron-settings beyond 3.2.0 breaks i18n setup (1/12/2021)
 
 npm run electron-dev
 
-## After adding new translation entries
+## Adding new translation entries
 
+- add new entries to public/locales/
 - npm run build
 - npm run electron-dev
 
